@@ -16,20 +16,23 @@ namespace TowerDefence
         [SerializeField] private float flightTime = 1;
         [SerializeField] private TrajectoryType trajectoryType;
         [SerializeField] private ParticleSystem launchParticles;
-
-        private Enemy targetEnemy;
+        
         private readonly List<ProjectileInfo> currentProjectiles = new();
         private float reloadT;
 
         [HideInInspector] public Vector3 direction;
         [HideInInspector] public float angle;
+        [HideInInspector] public bool hasTarget = false;
         
         private void Update()
         {
-            targetEnemy = EnemyFinder.GetEnemyInRange(transform.position, maxDistance);
+            var targetEnemy = EnemyFinder.GetEnemyInRange(transform.position, maxDistance);
 
-            if (HasTarget())
+            hasTarget = targetEnemy != null;
+
+            if (hasTarget)
             {
+                hasTarget = true;
                 var pos = Enemy.GetNextPos(targetEnemy.pathParent, targetEnemy.currentPathIndex,
                         targetEnemy.currentPathT, targetEnemy.speed, (int)((1f / Time.fixedDeltaTime) * flightTime))
                     .newPos;
@@ -38,7 +41,7 @@ namespace TowerDefence
                 angle = CalculateAngle(pos, flightTime);
 
                 if (!(reloadT >= reloadDuration)) return;
-                currentProjectiles.Add(LaunchProjectile(pos));
+                currentProjectiles.Add(LaunchProjectile(pos, targetEnemy));
                 if (launchParticles != null)
                 {
                     launchParticles.Play();
@@ -59,7 +62,7 @@ namespace TowerDefence
             {
                 if (currentProjectiles[i].reachedTarget)
                 {
-                    currentProjectiles[i].targetEnemy.gameObject.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+                    currentProjectiles[i].targetEnemy.TakeDamage(damage);
                     Destroy(currentProjectiles[i].go);
                     currentProjectiles.RemoveAt(i);
                     i--;
@@ -108,7 +111,7 @@ namespace TowerDefence
             return -90 + flightAngle;
         }
 
-        private ProjectileInfo LaunchProjectile(Vector3 pos)
+        private ProjectileInfo LaunchProjectile(Vector3 pos, Enemy targetEnemy)
         {
             ProjectileInfo info = new();
             info.t = 0;
@@ -122,11 +125,6 @@ namespace TowerDefence
             info.targetEnemy = targetEnemy;
 
             return info;
-        }
-
-        public bool HasTarget()
-        {
-            return targetEnemy != null;
         }
         
 #if UNITY_EDITOR

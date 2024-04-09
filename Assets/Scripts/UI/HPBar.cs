@@ -1,12 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class HPBar : MonoBehaviour
+namespace UI
 {
-    public Image ImageCurrent;
-
-    public void SetValue(int current, int max)
+    public class HPBar : MonoBehaviour
     {
-        ImageCurrent.fillAmount = (float)current / (float)max;
+        public Image healthBar;
+        public Image damagedBar;
+    
+        [SerializeField] private float lerpSpeed = 0.05f;
+
+        public void SetValue(int current, int max)
+        {
+            healthBar.fillAmount = (float)current / (float)max;
+            damagedBar.DOFillAmount(healthBar.fillAmount, 0.5f).SetEase(Ease.InQuint);
+        }
     }
 }

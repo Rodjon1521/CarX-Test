@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -14,6 +15,8 @@ namespace TowerDefence
             public bool reached;
         }
 
+        public Transform EnemyTransform;
+
         private const float Interp = 20;
         public float speed = 10f;
         public Transform pathParent;
@@ -23,6 +26,13 @@ namespace TowerDefence
         private bool reached = false;
          
         public bool IsActive => gameObject.activeInHierarchy;
+        
+        public int CurrentHp = 100;
+        public int MaxHp = 100;
+
+        public event Action HealthChanged;
+
+        private Tween currentTween = null;
 
         private void Start()
         {
@@ -40,7 +50,7 @@ namespace TowerDefence
             transform.position += diff * (Interp * Time.deltaTime);
             transform.LookAt(posTarget);
         }
-        
+
         private void FixedUpdate()
         {
             var newPosInfo = GetNextPos(pathParent, currentPathIndex, currentPathT, speed, 1);
@@ -85,16 +95,31 @@ namespace TowerDefence
             nextPosInfo.newT = currentPathT;
             return nextPosInfo;
         }
-        
-        
+
+
         public void ObjectReuse()
         {
             currentPathIndex = 0;
             currentPathT = 0;
             posTarget = pathParent.GetChild(0).position;
             transform.position = posTarget;
-            gameObject.GetComponent<EnemyHealth>().Reset();
             reached = false;
+            CurrentHp = MaxHp;
+            HealthChanged?.Invoke();
+            currentTween.Kill();
+        }
+
+        public void TakeDamage(int damage)
+        {
+            if (CurrentHp <= 0)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            CurrentHp -= damage;
+            currentTween = EnemyTransform.DOShakeRotation(0.4f, 20, 10, 90, true, ShakeRandomnessMode.Harmonic);
+            
+            HealthChanged?.Invoke();
         }
     }
 }

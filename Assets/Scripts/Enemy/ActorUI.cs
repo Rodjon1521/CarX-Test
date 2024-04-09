@@ -1,23 +1,24 @@
-﻿using System;
+﻿using TowerDefence;
+using UI;
 using UnityEngine;
 
-namespace TowerDefence
+namespace Enemy
 {
     public class ActorUI : MonoBehaviour
     {
         public HPBar HpBar;
 
-        private EnemyHealth _health;
+        private TowerDefence.Enemy enemy;
 
         private void Start()
         {
-            _health = GetComponent<EnemyHealth>();
-            _health.HealthChanged += UpdateHpBar;
+            enemy = GetComponent<TowerDefence.Enemy>();
+            enemy.HealthChanged += UpdateHpBar;
         }
 
         private void UpdateHpBar()
         {
-            HpBar.SetValue(_health.Current, _health.Max);
+            HpBar.SetValue(enemy.CurrentHp, enemy.MaxHp);
         }
     }
 }

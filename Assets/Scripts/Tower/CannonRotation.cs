@@ -13,7 +13,7 @@ namespace TowerDefence
 
         private void Update()
         {
-            if (tower.HasTarget())
+            if (tower.hasTarget)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(tower.direction);
 
