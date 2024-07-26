@@ -72,3 +72,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 /.idea
 /.vsconfig
+ProjectSettings/XboxOneGame.config
+ProjectSettings/MultiplayerManager.asset
+ProjectSettings/GameCoreXboxOneSettings.asset
