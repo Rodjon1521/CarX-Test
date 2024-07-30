@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Linq;
+using DG.Tweening.Plugins.Core.PathCore;
+using Infrastructure.Factory;
+using Infrastructure.Services;
 using UnityEngine;
 
 namespace TowerDefence
@@ -7,22 +11,14 @@ namespace TowerDefence
     {
         [SerializeField, Range(0, 10)] private float delayToSpawnInSec = 1f;
         [SerializeField, Range(1, 20)] private int enemiesCount = 10;
-        [SerializeField] private GameObject enemyPrefab;
-
+        private IGameFactory _factory;
+        [SerializeField] private Transform pathParent;
         private float passedTime = 0f;
-        private PoolManager poolManager;
-        public Enemy[] createdEnemies;
         
-        public void Construct(Transform pathParent, PoolManager poolManager)
+        
+        private void Awake()
         {
-            this.poolManager = poolManager;
-            createdEnemies = poolManager.CreatePool<Enemy>(enemyPrefab, transform, enemiesCount);
-
-            foreach (var enemy in createdEnemies)
-            {
-                enemy.pathParent = pathParent;
-                enemy.ObjectReuse();
-            }
+            _factory = AllServices.Container.Single<IGameFactory>();
         }
 
         private void Update()
@@ -40,12 +36,7 @@ namespace TowerDefence
 
         public void Spawn()
         {
-            foreach (var enemy in createdEnemies)
-            {
-                if (enemy.IsActive) continue;
-                poolManager.ReuseObject(enemyPrefab);
-                return;
-            }
+            var enemy = _factory.CreateEnemy(pathParent, transform);
         }
     }
 }

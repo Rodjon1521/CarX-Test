@@ -1,5 +1,4 @@
-﻿using _Scripts.StaticData;
-using StaticData;
+﻿using StaticData;
 
 namespace Infrastructure.Services
 {

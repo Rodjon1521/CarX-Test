@@ -7,18 +7,27 @@ namespace Enemy
     public class ActorUI : MonoBehaviour
     {
         public HPBar HpBar;
+        private IHealth _health;
 
-        private TowerDefence.Enemy enemy;
-
+        public void Construct(IHealth health)
+        {
+            _health = health;
+            _health.HealthChanged += UpdateHpBar;
+        }
+        
         private void Start()
         {
-            enemy = GetComponent<TowerDefence.Enemy>();
-            enemy.HealthChanged += UpdateHpBar;
-        }
+            IHealth health = GetComponent<IHealth>();
 
+            if (health != null)
+            {
+                Construct(health);
+            }
+        }
+        
         private void UpdateHpBar()
         {
-            HpBar.SetValue(enemy.CurrentHp, enemy.MaxHp);
+            HpBar.SetValue(_health.current, _health.max);
         }
     }
 }

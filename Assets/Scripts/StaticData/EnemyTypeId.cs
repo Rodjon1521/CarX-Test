@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace _Scripts.StaticData
+namespace StaticData
 {
     [Serializable]
     public enum EnemyTypeId
     {
         DefaultEnemy,
-        RangeEnemy,
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using _Scripts.StaticData;
 using Infrastructure.Services;
 using UnityEngine;
 
@@ -14,6 +13,7 @@ namespace StaticData
         {
             _enemy = Resources.LoadAll<EnemyStaticData>("StaticData")
                 .ToDictionary(x => x.EnemyTypeId, x => x);
+            Debug.Log(_enemy.Count);
         }
 
         public EnemyStaticData ForEnemy(EnemyTypeId typeId)

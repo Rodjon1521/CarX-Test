@@ -11,8 +11,6 @@ namespace TowerDefence
 
         private void Awake()
         {
-            enemySpawner.Construct(pathParent, poolManager);
-            EnemyFinder.enemies = enemySpawner.createdEnemies;
         }
     }
 }
