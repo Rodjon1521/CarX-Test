@@ -35,5 +35,11 @@ namespace Enemy
             
             HealthChanged?.Invoke();
         }
+        
+        public void RefreshHealth()
+        {
+            _current = _max;
+            HealthChanged?.Invoke();
+        }
     }
 }

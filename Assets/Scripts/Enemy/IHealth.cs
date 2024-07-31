@@ -8,5 +8,6 @@ namespace Enemy
         int current { get; set; }
         int max { get; set; }
         void TakeDamage(int damage);
+        public void RefreshHealth();
     }
 }

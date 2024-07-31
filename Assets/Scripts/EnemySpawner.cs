@@ -1,42 +1,68 @@
 ﻿using System;
-using System.Linq;
-using DG.Tweening.Plugins.Core.PathCore;
+using System.Collections.Generic;
+using Enemy;
 using Infrastructure.Factory;
 using Infrastructure.Services;
+using ObjectsPool;
+using Tower;
 using UnityEngine;
 
-namespace TowerDefence
+[RequireComponent(typeof(ObjectPoolComponent))]
+public class EnemySpawner : MonoBehaviour
 {
-    public class EnemySpawner : MonoBehaviour
+    [SerializeField, Range(0, 10)] private float delayToSpawnInSec = 1f;
+    
+    [SerializeField] private Transform pathParent;
+    private IGameFactory _factory;
+    
+    private float passedTime = 0f;
+    
+    private EnemyDeath _enemyDeath;
+    private EnemyMovement _enemyMovement;
+    
+    private ObjectPoolComponent _pool;
+        
+    private void Awake()
     {
-        [SerializeField, Range(0, 10)] private float delayToSpawnInSec = 1f;
-        [SerializeField, Range(1, 20)] private int enemiesCount = 10;
-        private IGameFactory _factory;
-        [SerializeField] private Transform pathParent;
-        private float passedTime = 0f;
-        
-        
-        private void Awake()
-        {
-            _factory = AllServices.Container.Single<IGameFactory>();
-        }
+        _pool = GetComponent<ObjectPoolComponent>();
+        _factory = AllServices.Container.Single<IGameFactory>();
+        CreatePool();
+    }
 
-        private void Update()
+    private void Update()
+    {
+        if (passedTime <= delayToSpawnInSec)
         {
-            if (passedTime <= delayToSpawnInSec)
-            {
-                passedTime += Time.deltaTime;
-            }
-            else
-            {
-                Spawn();
-                passedTime -= delayToSpawnInSec;
-            }
+            passedTime += Time.deltaTime;
         }
+        else
+        {
+            _pool.TakeObject();
+            passedTime -= delayToSpawnInSec;
+        }
+    }
 
-        public void Spawn()
+    private PooledObject Spawn()
+    {
+        var enemy = _factory.CreateEnemy(pathParent, transform);
+        enemy.transform.localPosition = transform.position;
+        EnemyFinderHelper.enemies.Add(enemy.GetComponent<Enemy.Enemy>());
+
+        PooledObject pooledObject = enemy.GetComponent<PooledObject>();
+        _enemyDeath = enemy.GetComponent<EnemyDeath>();
+        return pooledObject;
+    }
+    
+    public void CreatePool()
+    {
+        var pool = new Queue<PooledObject>(_pool.count);
+        for (int i = 0; i < _pool.count; i++)
         {
-            var enemy = _factory.CreateEnemy(pathParent, transform);
+            var enemy = Spawn();
+            enemy.gameObject.SetActive(false);
+            enemy.Pool = _pool;
+            pool.Enqueue(enemy);
         }
+        _pool.SetupPool(pool);
     }
 }

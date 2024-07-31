@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Enemy;
+using Tower;
 using UnityEngine;
 
 namespace TowerDefence
@@ -26,15 +28,15 @@ namespace TowerDefence
         
         private void Update()
         {
-            var targetEnemy = EnemyFinder.GetEnemyInRange(transform.position, maxDistance);
+            var targetEnemy = EnemyFinderHelper.GetEnemyInRange(transform.position, maxDistance);
 
             hasTarget = targetEnemy != null;
 
             if (hasTarget)
             {
-                hasTarget = true;
-                var pos = Enemy.GetNextPos(targetEnemy.pathParent, targetEnemy.currentPathIndex,
-                        targetEnemy.currentPathT, targetEnemy.speed, (int)((1f / Time.fixedDeltaTime) * flightTime))
+                var movement = targetEnemy.enemyMovement;
+                var pos = EnemyMovement.GetNextPos(movement.pathParent, movement.currentPathIndex,
+                        movement.currentPathT, movement.speed, (int)((1f / Time.fixedDeltaTime) * flightTime))
                     .newPos;
                 direction = (pos - origin.transform.position).normalized;
                 reloadT += Time.deltaTime * shootPerSeconds;
@@ -62,7 +64,7 @@ namespace TowerDefence
             {
                 if (currentProjectiles[i].reachedTarget)
                 {
-                    currentProjectiles[i].targetEnemy.TakeDamage(damage);
+                    currentProjectiles[i].targetEnemy.enemyHealth.TakeDamage(damage);
                     Destroy(currentProjectiles[i].go);
                     currentProjectiles.RemoveAt(i);
                     i--;
@@ -111,7 +113,7 @@ namespace TowerDefence
             return -90 + flightAngle;
         }
 
-        private ProjectileInfo LaunchProjectile(Vector3 pos, Enemy targetEnemy)
+        private ProjectileInfo LaunchProjectile(Vector3 pos, Enemy.Enemy targetEnemy)
         {
             ProjectileInfo info = new();
             info.t = 0;

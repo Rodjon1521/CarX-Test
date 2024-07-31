@@ -3,6 +3,7 @@ using Enemy;
 using Infrastructure.AssetManagement;
 using Infrastructure.Services;
 using StaticData;
+using Tower;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -23,10 +24,8 @@ namespace Infrastructure.Factory
         public GameObject CreateEnemy(Transform pathParent, Transform parent)
         {
             var enemyData = _staticData.ForEnemy(EnemyTypeId.DefaultEnemy);
-            Debug.Log(enemyData.MoveSpeed);
             GameObject enemy = Object.Instantiate(enemyData.Prefab, parent.position, Quaternion.identity, parent);
             
-            /*
             var health = enemy.GetComponent<IHealth>();
             health.current = enemyData.Hp;
             health.max = enemyData.Hp;
@@ -34,7 +33,7 @@ namespace Infrastructure.Factory
             enemy.GetComponent<ActorUI>().Construct(health);
             
             var movement = enemy.GetComponent<EnemyMovement>();
-            movement.Construct(pathParent, enemyData.MoveSpeed);*/
+            movement.Construct(pathParent, enemyData.MoveSpeed);
             
             return enemy;
         }

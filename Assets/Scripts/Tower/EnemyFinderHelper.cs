@@ -1,16 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Enemy;
+using UnityEngine;
 
-namespace TowerDefence
+namespace Tower
 {
-    public static class EnemyFinder
+    public static class EnemyFinderHelper
     {
-        public static Enemy[] enemies;
+        public static List<Enemy.Enemy> enemies = new List<Enemy.Enemy>();
 
-        public static Enemy GetEnemyInRange(Vector3 center, float radius)
+        public static Enemy.Enemy GetEnemyInRange(Vector3 center, float radius)
         {
             foreach (var enemy in enemies)
             {
-                if (!enemy.IsActive) continue;
+                if (!enemy.gameObject.activeSelf) continue;
                 var dist = center - enemy.transform.position;
                 var sqrDist = dist.x * dist.x + dist.y * dist.y;
                 

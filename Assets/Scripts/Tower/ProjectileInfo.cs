@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Enemy;
+using UnityEngine;
 
-namespace TowerDefence
+namespace Tower
 {
     [System.Serializable]
     public struct ProjectileInfo
@@ -12,6 +13,6 @@ namespace TowerDefence
         public float flightTime;
         public bool reachedTarget;
         public GameObject go;
-        public Enemy targetEnemy;
+        public Enemy.Enemy targetEnemy;
     }
 }
