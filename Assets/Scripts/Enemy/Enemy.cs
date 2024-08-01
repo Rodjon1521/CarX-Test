@@ -1,7 +1,6 @@
 ﻿using System;
-using DG.Tweening;
 using ObjectsPool;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 namespace Enemy
 {
@@ -18,7 +17,7 @@ namespace Enemy
             enemyHealth = GetComponent<IHealth>();
         }
 
-        private void Start()
+        private void OnEnable()
         {
             _enemyDeath.Happened += DestroyMonster;
             enemyMovement.Reached += DestroyMonster;
@@ -40,6 +39,12 @@ namespace Enemy
             base.PrepareObject();
             enemyHealth.RefreshHealth();
             enemyMovement.RefreshPosition();
+        }
+
+        private void OnDisable()
+        {
+            _enemyDeath.Happened -= DestroyMonster;
+            enemyMovement.Reached -= DestroyMonster;
         }
     }
 }

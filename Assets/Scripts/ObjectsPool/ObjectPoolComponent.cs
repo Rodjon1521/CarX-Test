@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using TowerDefence;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace ObjectsPool
 {
@@ -12,10 +10,17 @@ namespace ObjectsPool
 
         private Queue<PooledObject> _pool;
         private PooledObject _tmp;
-
+        
+        public event Action OnOvered;
+        
         public void SetupPool(Queue<PooledObject> pool)
         {
             _pool = pool;
+        }
+
+        public void Push(PooledObject obj)
+        {
+            _pool.Enqueue(obj);
         }
         
         public PooledObject TakeObject()
@@ -24,11 +29,11 @@ namespace ObjectsPool
             {
                 _tmp = _pool.Dequeue();
                 _tmp.gameObject.SetActive(true);
+                _tmp.PrepareToUse();
             }
             else
             {
-                // Object.Instantiate(_tmp);
-                throw new Exception("Pool is not enough");
+                OnOvered?.Invoke();
             }
             return _tmp;
         }

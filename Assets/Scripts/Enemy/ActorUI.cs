@@ -1,12 +1,11 @@
-﻿using TowerDefence;
-using UI;
+﻿using UI;
 using UnityEngine;
 
 namespace Enemy
 {
     public class ActorUI : MonoBehaviour
     {
-        public HPBar HpBar;
+        public HPBar hpBar;
         private IHealth _health;
 
         public void Construct(IHealth health)
@@ -27,7 +26,20 @@ namespace Enemy
         
         private void UpdateHpBar()
         {
-            HpBar.SetValue(_health.current, _health.max);
+            hpBar.SetValue(_health.current, _health.max);
+        }
+
+        private void OnEnable()
+        {
+            if (_health != null)
+            {
+                _health.HealthChanged += UpdateHpBar;
+            }
+        }
+
+        private void OnDisable()
+        {
+            _health.HealthChanged -= UpdateHpBar;
         }
     }
 }

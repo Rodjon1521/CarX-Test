@@ -29,6 +29,11 @@ public class EnemySpawner : MonoBehaviour
         CreatePool();
     }
 
+    private void OnEnable()
+    {
+        _pool.OnOvered += PushToPool;
+    }
+
     private void Update()
     {
         if (passedTime <= delayToSpawnInSec)
@@ -64,5 +69,18 @@ public class EnemySpawner : MonoBehaviour
             pool.Enqueue(enemy);
         }
         _pool.SetupPool(pool);
+    }
+
+    public void PushToPool()
+    {
+        var enemy = Spawn();
+        enemy.gameObject.SetActive(false);
+        enemy.Pool = _pool;
+        _pool.Push(enemy);
+    }
+
+    private void OnDisable()
+    {
+        _pool.OnOvered -= PushToPool;
     }
 }
