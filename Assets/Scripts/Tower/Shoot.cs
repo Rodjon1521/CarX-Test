@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Enemy;
+using Infrastructure.Factory;
+using Infrastructure.Services;
 using NUnit.Framework;
+using ObjectsPool;
 using TowerDefence;
 using UnityEngine;
 
 namespace Tower
 {
+    [RequireComponent(typeof(ObjectPoolComponent))]
     public class Shoot : MonoBehaviour
     {
         [SerializeField] private float shootPerSeconds = 1.25f;
@@ -21,6 +25,15 @@ namespace Tower
         
         public bool hasTarget;
         public Vector3 targetPos;
+        
+        private ObjectPoolComponent _pool;
+
+        private void Awake()
+        {
+            _pool = GetComponent<ObjectPoolComponent>();
+            _pool.SetupPool(projectilePrefab, origin.transform.position);
+            
+        }
 
         private void Update()
         {
@@ -37,18 +50,14 @@ namespace Tower
                     .newPos;
                 reloadT += Time.deltaTime * shootPerSeconds;
                 if (!(reloadT >= reloadDuration)) return;
-                LaunchProjectile(targetPos, targetEnemy);
+
+                var projectile = _factory.LaunchProjectile(projectilePrefab, origin.transform.position);
+                projectile.Constructor(targetPos, flightTime, targetEnemy, TrajectoryType.Parabolic);
+                
                 reloadT -= reloadDuration;
             }
         }
         
-        private Projectile LaunchProjectile(Vector3 pos, Enemy.Enemy targetEnemy)
-        {
-            var go = GameObject.Instantiate(projectilePrefab, origin.transform.position, Quaternion.identity);
-            var projectile = go.GetComponent<Projectile>();
-            projectile.Constructor(origin.transform.position, pos, flightTime, targetEnemy, TrajectoryType.Parabolic);
-
-            return projectile;
-        }
+        
     }
 }
