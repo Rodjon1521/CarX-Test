@@ -51,8 +51,8 @@ namespace Tower
                 reloadT += Time.deltaTime * shootPerSeconds;
                 if (!(reloadT >= reloadDuration)) return;
 
-                var projectile = _factory.LaunchProjectile(projectilePrefab, origin.transform.position);
-                projectile.Constructor(targetPos, flightTime, targetEnemy, TrajectoryType.Parabolic);
+                /*var projectile = _factory.LaunchProjectile(projectilePrefab, origin.transform.position);
+                projectile.Constructor(targetPos, flightTime, targetEnemy, TrajectoryType.Parabolic);*/
                 
                 reloadT -= reloadDuration;
             }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Enemy;
 using Infrastructure.Services;
 using UnityEngine;
 
@@ -11,13 +12,13 @@ namespace StaticData
 
         public void LoadMonsters()
         {
-            _enemy = Resources.LoadAll<EnemyStaticData>("StaticData")
-                .ToDictionary(x => x.EnemyTypeId, x => x);
+            /*_enemy = Resources.LoadAll<EnemyStaticData>("StaticData")
+                .ToDictionary(x => x.enemyTypeId, x => x);*/
         }
 
         public EnemyStaticData ForEnemy(EnemyTypeId typeId)
         {
-            return _enemy.TryGetValue(typeId, out var staticData) ? staticData : null;
+            return _enemy.GetValueOrDefault(typeId);
         }
     }
 }

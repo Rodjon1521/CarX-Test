@@ -1,4 +1,5 @@
-﻿using StaticData;
+﻿using Enemy;
+using StaticData;
 
 namespace Infrastructure.Services
 {

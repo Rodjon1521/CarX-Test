@@ -6,5 +6,6 @@ namespace StaticData
     public enum EnemyTypeId
     {
         DefaultEnemy,
+        FlyEnemy
     }
 }

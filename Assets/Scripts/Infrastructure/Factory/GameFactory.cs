@@ -22,19 +22,19 @@ namespace Infrastructure.Factory
             _staticData = staticData;
         }
 
-        public GameObject CreateEnemy(Transform pathParent, Transform parent)
+        public GameObject CreateEnemy(EnemyTypeId id)
         {
             var enemyData = _staticData.ForEnemy(EnemyTypeId.DefaultEnemy);
-            GameObject enemy = Object.Instantiate(enemyData.Prefab, parent.position, Quaternion.identity, parent);
+            GameObject enemy = Object.Instantiate(enemyData.prefab, parent.position, Quaternion.identity, parent);
             
             var health = enemy.GetComponent<IHealth>();
-            health.current = enemyData.Hp;
-            health.max = enemyData.Hp;
+            health.current = enemyData.hp;
+            health.max = enemyData.hp;
             
             enemy.GetComponent<ActorUI>().Construct(health);
             
             var movement = enemy.GetComponent<EnemyMovement>();
-            movement.Construct(pathParent, enemyData.MoveSpeed);
+            movement.Construct(pathParent, enemyData.moveSpeed);
             
             return enemy;
         }
