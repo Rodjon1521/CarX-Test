@@ -13,30 +13,28 @@ namespace Infrastructure.Factory
     public class GameFactory : IGameFactory
     {
         private readonly IAssets _assets;
-        private readonly IStaticDataService _staticData;
+        private readonly EnemySO _enemyData;
         
         
         public GameFactory(IAssets assets, IStaticDataService staticData)
         {
             _assets = assets;
-            _staticData = staticData;
+            _enemyData = EnemySO.LoadAndInitDB();
         }
 
-        public GameObject CreateEnemy(EnemyTypeId id)
+        public GameObject CreateEnemy(Transform pathParent)
         {
-            var enemyData = _staticData.ForEnemy(EnemyTypeId.DefaultEnemy);
-            GameObject enemy = Object.Instantiate(enemyData.prefab, parent.position, Quaternion.identity, parent);
+            var info = _enemyData.Find(EnemyTypeId.DefaultEnemy);
+            var health = info.prefab.GetComponent<IHealth>();
+            health.current = info.hp;
+            health.max = info.hp;
             
-            var health = enemy.GetComponent<IHealth>();
-            health.current = enemyData.hp;
-            health.max = enemyData.hp;
+            info.prefab.GetComponent<ActorUI>().Construct(health);
             
-            enemy.GetComponent<ActorUI>().Construct(health);
+            var movement = info.prefab.GetComponent<EnemyMovement>();
+            movement.Construct(pathParent, info.moveSpeed);
             
-            var movement = enemy.GetComponent<EnemyMovement>();
-            movement.Construct(pathParent, enemyData.moveSpeed);
-            
-            return enemy;
+            return info.prefab;
         }
     }
 }

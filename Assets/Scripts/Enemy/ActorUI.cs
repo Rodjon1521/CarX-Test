@@ -37,7 +37,7 @@ namespace Enemy
             }
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             _health.HealthChanged -= UpdateHpBar;
         }

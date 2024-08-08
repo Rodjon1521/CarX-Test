@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Enemy;
-using Infrastructure.Factory;
-using Infrastructure.Services;
-using NUnit.Framework;
-using ObjectsPool;
+﻿using Enemy;
+using PoolingSystem;
 using TowerDefence;
 using UnityEngine;
 
 namespace Tower
 {
-    [RequireComponent(typeof(ObjectPoolComponent))]
     public class Shoot : MonoBehaviour
     {
         [SerializeField] private float shootPerSeconds = 1.25f;
@@ -25,15 +19,6 @@ namespace Tower
         
         public bool hasTarget;
         public Vector3 targetPos;
-        
-        private ObjectPoolComponent _pool;
-
-        private void Awake()
-        {
-            _pool = GetComponent<ObjectPoolComponent>();
-            _pool.SetupPool(projectilePrefab, origin.transform.position);
-            
-        }
 
         private void Update()
         {
@@ -51,8 +36,9 @@ namespace Tower
                 reloadT += Time.deltaTime * shootPerSeconds;
                 if (!(reloadT >= reloadDuration)) return;
 
-                /*var projectile = _factory.LaunchProjectile(projectilePrefab, origin.transform.position);
-                projectile.Constructor(targetPos, flightTime, targetEnemy, TrajectoryType.Parabolic);*/
+                
+                var obj = PoolManager.instance.PopOrCreate<Projectile>(projectilePrefab.GetComponent<Projectile>(), transform);
+                obj.Constructor(origin.position, targetPos, flightTime, targetEnemy, TrajectoryType.Parabolic);
                 
                 reloadT -= reloadDuration;
             }

@@ -1,10 +1,9 @@
-﻿using System;
-using ObjectsPool;
-using UnityEngine;
+﻿using PoolingSystem;
+using UnityEngine.Serialization;
 
 namespace Enemy
 {
-    public class Enemy : PooledObject
+    public class Enemy : ObjectPool
     {
         private EnemyDeath _enemyDeath;
         public EnemyMovement enemyMovement;
@@ -19,32 +18,15 @@ namespace Enemy
 
         private void OnEnable()
         {
-            _enemyDeath.Happened += DestroyMonster;
-            enemyMovement.Reached += DestroyMonster;
+            enemyMovement.Reached += Push;
+            _enemyDeath.Happened += Push;
         }
 
-        private void DestroyMonster()
+        public override void Push()
         {
-            Release();
-        }
-
-        private void OnDestroy()
-        {
-            _enemyDeath.Happened -= DestroyMonster;
-            enemyMovement.Reached -= DestroyMonster;
-        }
-        
-        protected override void PrepareObject()
-        {
-            base.PrepareObject();
+            base.Push();
             enemyHealth.RefreshHealth();
             enemyMovement.RefreshPosition();
-        }
-
-        private void OnDisable()
-        {
-            _enemyDeath.Happened -= DestroyMonster;
-            enemyMovement.Reached -= DestroyMonster;
         }
     }
 }
